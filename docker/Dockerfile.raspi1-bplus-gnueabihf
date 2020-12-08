@@ -1,0 +1,42 @@
+# Build image:
+# podman build -t raspi1-bplus-gnueabihf-toolchain -f Dockerfile.raspi1-bplus-gnueabihf
+#
+# This image is specifically tailored to build the omnishock rust crate.
+
+FROM debian:buster-slim
+
+COPY common_debian.sh /common.sh
+RUN /common.sh
+
+COPY cmake.sh /
+RUN /cmake.sh
+
+COPY xargo.sh /
+RUN /xargo.sh
+
+RUN cd /opt \
+ && curl --retry 3 -sSfL https://github.com/Pro/raspi-toolchain/releases/latest/download/raspi-toolchain.tar.gz -O \
+ && tar --strip-components=1 -xzf raspi-toolchain.tar.gz -C /opt \
+ && rm raspi-toolchain.tar.gz
+
+ENV PATH /opt/cross-pi-gcc/bin:$PATH
+
+COPY qemu.sh /
+RUN /qemu.sh arm
+
+# If using the following line, the folder raspberrypi must contain folder rootfs
+COPY raspberrypi /opt/raspberrypi
+
+RUN ln -s /opt/raspberrypi/rootfs/usr/lib/arm-linux-gnueabihf /usr/lib \
+    && ln -s /opt/raspberrypi/rootfs/lib/arm-linux-gnueabihf /lib
+
+ENV CARGO_TARGET_ARM_UNKNOWN_LINUX_GNUEABIHF_LINKER=arm-linux-gnueabihf-gcc \
+    CARGO_TARGET_ARM_UNKNOWN_LINUX_GNUEABIHF_RUNNER=qemu-arm \
+    CC_arm_unknown_linux_gnueabihf=arm-linux-gnueabihf-gcc \
+    CXX_arm_unknown_linux_gnueabihf=arm-linux-gnueabihf-g++ \
+    QEMU_LD_PREFIX=/opt/cross-pi-gcc/arm-linux-gnueabihf/libc \
+    LD_LIBRARY_PATH=/opt/cross-pi-gcc/arm-linux-gnueabihf/libc/lib:/opt/cross-pi-gcc/arm-linux-gnueabihf/lib:/opt/cross-pi-gcc/lib \
+    RUST_TEST_THREADS=1 \
+    CFLAGS="-mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard" \
+    CXXFLAGS="-mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard" \
+    PKG_CONFIG_PATH="/opt/raspberrypi/rootfs/usr/lib/arm-linux-gnueabihf/pkgconfig/:$PKG_CONFIG_PATH"
