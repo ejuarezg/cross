@@ -24,7 +24,7 @@ ENV PATH /opt/cross-pi-gcc/bin:$PATH
 COPY qemu.sh /
 RUN /qemu.sh arm
 
-# If using the following line, the folder raspberrypi must contain folder rootfs
+# The folder raspberrypi must contain the subfolder rootfs
 COPY raspberrypi /opt/raspberrypi
 
 RUN ln -s /opt/raspberrypi/rootfs/usr/lib/arm-linux-gnueabihf /usr/lib \

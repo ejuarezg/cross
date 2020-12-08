@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 #
-# For use with Dockerfile.raspi1-bplus-gnueabihf and
-# Dockerfile.raspi1-bplus-gnueabihf-none
+# For use with Dockerfile.raspi1-bplus-gnueabihf
 
 set -x
 set -euo pipefail
 
-# Nabbed from https://github.com/dockcross/dockcross/blob/master/common.debian
+# These lines were nabbed from
+# https://github.com/dockcross/dockcross/blob/master/common.debian
 REPO=http://cdn-fastly.deb.debian.org
 echo "deb $REPO/debian buster main contrib non-free" > /etc/apt/sources.list  && \
 echo "deb $REPO/debian buster-updates main contrib non-free" >> /etc/apt/sources.list  && \
