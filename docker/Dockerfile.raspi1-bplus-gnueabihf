@@ -1,7 +1,5 @@
 # Build image:
 # podman build -t raspi1-bplus-gnueabihf-toolchain -f Dockerfile.raspi1-bplus-gnueabihf
-#
-# This image is specifically tailored to build the omnishock rust crate.
 
 FROM debian:buster-slim
 
