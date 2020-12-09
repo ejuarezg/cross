@@ -24,12 +24,6 @@ ENV PATH /opt/cross-pi-gcc/bin:$PATH
 COPY qemu.sh /
 RUN /qemu.sh arm
 
-# The folder raspberrypi must contain the subfolder rootfs
-COPY raspberrypi /opt/raspberrypi
-
-RUN ln -s /opt/raspberrypi/rootfs/usr/lib/arm-linux-gnueabihf /usr/lib \
-    && ln -s /opt/raspberrypi/rootfs/lib/arm-linux-gnueabihf /lib
-
 ENV CARGO_TARGET_ARM_UNKNOWN_LINUX_GNUEABIHF_LINKER=arm-linux-gnueabihf-gcc \
     CARGO_TARGET_ARM_UNKNOWN_LINUX_GNUEABIHF_RUNNER=qemu-arm \
     CC_arm_unknown_linux_gnueabihf=arm-linux-gnueabihf-gcc \
@@ -38,5 +32,4 @@ ENV CARGO_TARGET_ARM_UNKNOWN_LINUX_GNUEABIHF_LINKER=arm-linux-gnueabihf-gcc \
     LD_LIBRARY_PATH=/opt/cross-pi-gcc/arm-linux-gnueabihf/libc/lib:/opt/cross-pi-gcc/arm-linux-gnueabihf/lib:/opt/cross-pi-gcc/lib \
     RUST_TEST_THREADS=1 \
     CFLAGS="-mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard" \
-    CXXFLAGS="-mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard" \
-    PKG_CONFIG_PATH="/opt/raspberrypi/rootfs/usr/lib/arm-linux-gnueabihf/pkgconfig/:$PKG_CONFIG_PATH"
+    CXXFLAGS="-mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"
